@@ -3,11 +3,13 @@ import './index.scss';
 
 const Homepage = () => (
     <>
-        <p className="welcome-text">
-            Bienvenido a la plataforma de películas más grande
-            de toda Azul School
-        </p>
-        <button className="welcome-button">Ver películas</button>
+        <div className="welcome-container">
+            <p className="welcome-text">
+                Bienvenido a la plataforma de películas más grande
+                de toda Azul School
+            </p>
+            <button className="welcome-button">Ver películas</button>
+        </div>
     </>
 )
 
