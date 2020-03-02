@@ -40,6 +40,7 @@
             border: 0;
             height: 25px;
             border-radius: 10px;
+            font-size: 1em;
             text-align: center;
             &::placeholder {
                 text-align: center;
@@ -67,11 +68,6 @@
                 outline: none;
                 transform: scale(1.2);
             }
-            // &:hover, &:active, &:focus {
-            //     transform: scale(1.1);
-            //     padding: 15px;
-            //     outline: none;
-            // }
         }
     }
 }
