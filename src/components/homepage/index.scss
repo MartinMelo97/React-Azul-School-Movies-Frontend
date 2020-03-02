@@ -1,0 +1,23 @@
+.welcome-text {
+    padding: 0 10vw;
+    font-size: 4em;
+    display: flex;
+    color: #1b262c;
+    flex-direction: row;
+    justify-content: center;
+    text-align: justify;
+    align-items: center;
+}
+
+.welcome-button {
+    width: 50%;
+    height: 5%;
+    border: 0;
+    background-color: #ed6663;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    font-size: 1.5em;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+}
