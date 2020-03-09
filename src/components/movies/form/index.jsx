@@ -137,15 +137,6 @@ export default class MovieForm extends Component {
 
             if (!result.hasError) {
                 toast.success(successReponse);
-                if (isCreate) {
-                    newMovie.title = '';
-                    newMovie.description = '';
-                    newMovie.duration = 0;
-                    newMovie.ticketPrice = 0;
-                    newMovie.isOnCinemas = false;
-                    newMovie.schedules = [];
-                    this.setState({ newMovie });
-                }
             } else {
                 toast.error(errorResponse);
             };

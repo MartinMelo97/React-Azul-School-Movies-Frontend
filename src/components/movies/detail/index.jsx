@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { getMovie } from '../../../services';
-import { Link } from 'react-router-dom';
-// import moment from 'moment';
+import { getMovie, deleteMovie } from '../../../services';
 import './index.scss';
+import { toast } from 'react-toastify';
 
 export default class MovieDetail extends Component {
     constructor() {
@@ -32,15 +31,27 @@ export default class MovieDetail extends Component {
     };
 
     redirectToUpdateMovie = () => {
-        const { _id } = this.state.data
-        this.props.history.push(`/peliculas/editar/${_id}`)
-    }
+        const { _id } = this.state.data;
+        this.props.history.push(`/peliculas/editar/${_id}`);
+    };
 
     deleteMovie = async () => {
         if (window.confirm('Realmente deseas eliminar esta película?')) {
-            console.log("ELIMINAR")
-        }
-    }
+            try {
+                const movieId = this.state.data._id;
+                const response = await deleteMovie(movieId);
+
+                if (!response.hasError) {
+                    toast.info('Película eliminada con éxito');
+                } else {
+                    toast.error('No se pudo eliminar película');
+                };
+            } catch (error) {
+                toast.error('No se pudo eliminar película');
+                console.log(error);
+            };
+        };
+    };
 
     render() {
         const {

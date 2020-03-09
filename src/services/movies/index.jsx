@@ -36,8 +36,13 @@ export const createMovie = async data => {
             data
             );
         if (response.data) {
-            return response.data
-        };
+            return response.data;
+        } else {
+            return {
+                hasError: true,
+                error: 'No se pudo crear la película'
+            }
+        }
     } catch (error) {
         return {
             hasError: true,
@@ -53,7 +58,6 @@ export const updateMovie = async (movieId, data) => {
             data
         );
 
-        console.log(data);
         if (response.data) {
             return response.data
         };
@@ -64,3 +68,18 @@ export const updateMovie = async (movieId, data) => {
         }
     }
 }
+
+export const deleteMovie = async movieId => {
+    try {
+        const response = await axios.delete(`${API_URL}${moviesEndpoint}/${movieId}`);
+
+        if (response.data) {
+            return response.data;
+        };
+    } catch (error) {
+        return {
+            hasError: true,
+            error
+        };
+    };
+};

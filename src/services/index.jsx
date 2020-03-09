@@ -2,12 +2,14 @@ import {
     getMovies,
     getMovie,
     createMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie
 } from './movies';
 
 export {
     getMovies,
     getMovie,
     createMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie
 };
