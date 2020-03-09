@@ -3,12 +3,13 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 // Import components
 import Homepage from '../components/homepage';
-import { MovieList } from '../components/movies';
+import { MovieList, MovieDetail } from '../components/movies';
 
 const Routes = () => (
     <Switch>
         <Route exact path = "/" component={Homepage} />
         <Route exact path = "/peliculas" component={MovieList} />
+        <Route exact path = "/peliculas/:movieId" component={MovieDetail} />
         {/* Redirect to / if the route requested does not exist */}
         <Redirect to='/' />
     </Switch>

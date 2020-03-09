@@ -1,5 +1,12 @@
 @import "../../../consts/variables.scss";
 
+.link-movie-detail {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .movie-card-container {
     position: relative;
     max-width: 90%;

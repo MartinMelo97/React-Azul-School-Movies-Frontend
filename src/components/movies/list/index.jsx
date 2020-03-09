@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { getMovies } from '../../../services';
 import moment from 'moment';
 import './index.scss';
@@ -23,7 +24,7 @@ class MovieList extends Component {
             });
         } else {
             this.setState({
-                hasError: false,
+                hasError: true,
                 error: data.error
             });
         };
@@ -63,10 +64,15 @@ const ListComponent = (props) => {
             {
                 data.length > 0 ?
                     data.map(movie =>
-                        <MovieCard
-                            key={movie._id}
-                            movie={movie}
-                        />
+                        <Link
+                            className="link-movie-detail"
+                            to={`/peliculas/${movie._id}`}
+                        >
+                            <MovieCard
+                                key={movie._id}
+                                movie={movie}
+                            />
+                        </Link>
                     )
                 : <p>No hay ninguna película registrada :(</p>
             }
@@ -76,48 +82,48 @@ const ListComponent = (props) => {
 
 const MovieCard = ({movie}) => (
     <>
-    <div className="movie-card-container">
-        <div className="movie-card-info">
-            <div className="movie-card-basic-info">
-                <p className="movie-card-title">{movie.title}</p>
-                <p className="movie-card-desc">{movie.description}</p>
+        <div className="movie-card-container">
+            <div className="movie-card-info">
+                <div className="movie-card-basic-info">
+                    <p className="movie-card-title">{movie.title}</p>
+                    <p className="movie-card-desc">{movie.description}</p>
+                </div>
+                <div className="movie-card-details">
+                    <p>
+                        Entrada: <span>
+                            ${parseFloat(movie.ticketPrice).toFixed(2)}
+                        </span>
+                    </p>
+                    <p>
+                        Duración: <span>
+                            {movie.duration} min.
+                        </span>
+                    </p>
+                    <p>
+                        Disponible en cines: <span>
+                            {movie.isOnCinemas ? 'SI': 'NO'}
+                        </span>
+                    </p>
+                </div>
             </div>
-            <div className="movie-card-details">
-                <p>
-                    Entrada: <span>
-                        ${parseFloat(movie.ticketPrice).toFixed(2)}
-                    </span>
-                </p>
-                <p>
-                    Duración: <span>
-                        {movie.duration} min.
-                    </span>
-                </p>
-                <p>
-                    Disponible en cines: <span>
-                        {movie.isOnCinemas ? 'SI': 'NO'}
-                    </span>
-                </p>
+            <div className="movie-card-schedules-container">
+                <p>Horarios disponibles</p>
+                <div className="movie-card-schedules">
+                    {movie.schedules.length > 0 ?
+                        movie.schedules.map(schedule => (
+                            <p>{moment(schedule.time).format('HH:mm')}</p>
+                        ))
+                    : <p>No hay horarios disponibles :(</p>
+                    }
+                </div>
             </div>
         </div>
-        <div className="movie-card-schedules-container">
-            <p>Horarios disponibles</p>
-            <div className="movie-card-schedules">
-                {movie.schedules.length > 0 ?
-                    movie.schedules.map(schedule => (
-                        <p>{moment(schedule.time).format('HH:mm')}</p>
-                    ))
-                : <p>No hay horarios disponibles :(</p>
-                }
-            </div>
-        </div>
-    </div>
     </>
 )
 
 const ErrorComponent = ({error}) => (
     <>
-        <p>Ups! Algo falló al traes las películas</p>
+        <p>Ups! Algo falló al traer las películas</p>
         <p>{error}</p>
     </>
 );
