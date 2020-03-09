@@ -1,6 +1,7 @@
-import { getMovies, getMovie } from './movies';
+import { getMovies, getMovie, createMovie } from './movies';
 
 export {
     getMovies,
-    getMovie
+    getMovie,
+    createMovie
 };
