@@ -14,6 +14,7 @@ const Routes = () => (
         <Route exact path = "/" component={Homepage} />
         <Route exact path = "/peliculas" component={MovieList} />
         <Route exact path = "/peliculas/crear" component={MovieForm} />
+        <Route exact path = "/peliculas/editar/:movieId" component={MovieForm} />
         <Route exact path = "/peliculas/:movieId" component={MovieDetail} />
         {/* Redirect to / if the route requested does not exist */}
         <Redirect to='/' />

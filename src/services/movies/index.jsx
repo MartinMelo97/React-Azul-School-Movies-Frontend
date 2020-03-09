@@ -45,3 +45,22 @@ export const createMovie = async data => {
         };
     };
 };
+
+export const updateMovie = async (movieId, data) => {
+    try {
+        const response = await axios.put(
+            `${API_URL}${moviesEndpoint}/${movieId}`,
+            data
+        );
+
+        console.log(data);
+        if (response.data) {
+            return response.data
+        };
+    } catch (error) {
+        return {
+            hasError: true,
+            error
+        }
+    }
+}

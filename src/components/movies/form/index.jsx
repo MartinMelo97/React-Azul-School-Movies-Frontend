@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { createMovie } from '../../../services';
+import { createMovie, getMovie, updateMovie } from '../../../services';
 import { scheduleOptions as SOptions } from '../../../consts';
 import './index.scss';
 import moment from 'moment';
@@ -17,15 +17,41 @@ export default class MovieForm extends Component {
                 isOnCinemas: false,
                 schedules: []
             },
-            scheduleOptions: []
+            scheduleOptions: [],
+            isCreate: true,
+            isReady: false
         }
     };
 
-    componentDidMount = () => {
-        this.setState({
-            scheduleOptions: SOptions
-        })
+    componentDidMount = async () => {
+        if (this.props.match.params.movieId) {
+            try {
+                const { movieId } = this.props.match.params
+                const data = await getMovie(movieId)
+                if (!data.hasError) {
+                    data.schedules = this.unFormatSchedules(data.schedules)
+                    this.setState({
+                        isCreate: false,
+                        isReady: true,
+                        newMovie: data,
+                        scheduleOptions: await this.filterScheduleOptions(data.schedules)
+                    })
+                }
+            } catch (error) {
+                toast.error('Algo falló al traer la película')
+            }
+        } else {
+            this.setState({
+                scheduleOptions: SOptions,
+                isReady: true
+            })
+        }
     }
+
+    unFormatSchedules = schedules =>
+        schedules.map(schedule =>
+            moment(schedule.time).format('HH:mm')
+        )
 
     handleChange = event => {
         const { newMovie } = this.state;
@@ -44,28 +70,32 @@ export default class MovieForm extends Component {
         })
     }
 
-    filterScheduleOptions = () => {
-        let { scheduleOptions, newMovie } = this.state
+    filterScheduleOptions = (schedules) => {
+        let { scheduleOptions } = this.state;
         scheduleOptions = SOptions.filter(
             schedule => {
-                return !newMovie.schedules.includes(schedule)
+                return !schedules.includes(schedule)
             }
-        )
-        this.setState({
-            scheduleOptions
-        })
+        );
+        return scheduleOptions;
     }
 
     addSchedule = value => {
         const { newMovie } = this.state;
-        newMovie.schedules.push(value)
-        this.setState({ newMovie }, this.filterScheduleOptions());
+        newMovie.schedules.push(value);
+        this.setState({
+            newMovie,
+            scheduleOptions: this.filterScheduleOptions(newMovie.schedules)
+        });
     }
 
     removeSchedule = index => {
         const { newMovie } = this.state;
         newMovie.schedules.splice(index, 1);
-        this.setState({ newMovie }, this.filterScheduleOptions());
+        this.setState({
+            newMovie,
+            scheduleOptions: this.filterScheduleOptions(newMovie.schedules)
+        });
     }
 
     formatScheduleTimes = schedules => {
@@ -78,26 +108,49 @@ export default class MovieForm extends Component {
     }
 
     handleSubmit = async () => {
-        const { newMovie } = this.state;
+        const { newMovie, isCreate } = this.state;
+
+        const successReponse = isCreate
+            ? 'Película creada con éxito'
+            : 'Película editada con éxito';
+
+        const errorResponse = isCreate
+            ? 'No se pudo crear la película'
+            : 'No se pudo editar la película';
+
         try {
-            newMovie.schedules = this.formatScheduleTimes(newMovie.schedules)
-            newMovie.ticketPrice = parseFloat(newMovie.ticketPrice).toFixed(2)
-            const result = await createMovie(newMovie);
+            newMovie.schedules = this.formatScheduleTimes(newMovie.schedules);
+            newMovie.ticketPrice = parseFloat(newMovie.ticketPrice).toFixed(2);
+            let id = null;
+
+            if (!isCreate) {
+                id = newMovie._id;
+                delete newMovie._id;
+                delete newMovie.deletedAt;
+                delete newMovie.createdAt;
+                delete newMovie.updatedAt;
+            };
+
+            const result = await isCreate
+                ? createMovie(newMovie)
+                : updateMovie(id, newMovie);
 
             if (!result.hasError) {
-                toast.success('Película creada con éxito!')
-                newMovie.title = '';
-                newMovie.description = '';
-                newMovie.duration = 0;
-                newMovie.ticketPrice = 0;
-                newMovie.isOnCinemas = false;
-                newMovie.schedules = [];
-                this.setState({ newMovie });
+                toast.success(successReponse);
+                if (isCreate) {
+                    newMovie.title = '';
+                    newMovie.description = '';
+                    newMovie.duration = 0;
+                    newMovie.ticketPrice = 0;
+                    newMovie.isOnCinemas = false;
+                    newMovie.schedules = [];
+                    this.setState({ newMovie });
+                }
             } else {
-                toast.error('Algo falló al crear la película :(')
+                toast.error(errorResponse);
             };
         } catch (error) {
-            toast.error('Algo falló al crear la película :(')
+            toast.error(errorResponse);
             console.log(error);
         };
     }
@@ -109,17 +162,28 @@ export default class MovieForm extends Component {
             duration,
             ticketPrice,
             isOnCinemas,
-            schedules
+            schedules,
         } = this.state.newMovie;
 
         const {
-            scheduleOptions
+            scheduleOptions,
+            isCreate,
+            isReady
         } = this.state
 
+            const formTitle = isCreate
+            ? 'Crea una película'
+            : 'Editar película'
+
+            const buttonText = isCreate
+                ? 'Crear película'
+                : 'Guardar cambios'
+
         return (
-            <>
+            <> {
+                isReady &&
                 <div className="movies-form-container">
-                    <p>Crea una película</p>
+                    <p>{formTitle}</p>
                     <div className="input-data-container">
                         <div className="input-data-container-left">
                             <input
@@ -154,19 +218,18 @@ export default class MovieForm extends Component {
                             <select
                                 name="isOnCinemas"
                                 onChange={event => this.handleChangeIsOnCinema(event)}
+                                defaultValue={isOnCinemas}
                             >
                                 <option value="" disabled>
                                     ¿Disponble en cines?
                                 </option>
                                 <option
                                     value="false"
-                                    defaultValue={!isOnCinemas}
                                 >
                                     No disponible
                                 </option>
                                 <option
                                     value="true"
-                                    defaultValue={isOnCinemas}
                                 >
                                     Disponible
                                 </option>
@@ -177,6 +240,7 @@ export default class MovieForm extends Component {
                             >
                                 <option value="" defaultValue>Seleciona horarios</option>
                                 {
+                                    scheduleOptions &&
                                     scheduleOptions.map(option =>
                                         <option
                                             key={option}
@@ -216,9 +280,10 @@ export default class MovieForm extends Component {
                     <button
                         onClick={() => this.handleSubmit()}
                     >
-                        Crear película
+                        {buttonText}
                     </button>
                 </div>
+                }
             </>
         );
     };
