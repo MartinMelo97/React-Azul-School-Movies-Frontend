@@ -5,9 +5,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &:last-child {
+        margin-bottom: 7vh;
+    }
 }
 
 .movie-card-container {
+    margin: 2vh 0;
     position: relative;
     max-width: 90%;
     width: 90%;
@@ -73,7 +78,12 @@
         font-weight: 700;
     }
     .movie-card-schedules {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
         p {
+            margin: 0 10px;
             background-color: $primary;
             font-size: 0.8em;
             padding: 5px;
