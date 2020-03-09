@@ -3,6 +3,7 @@ import { createMovie } from '../../../services';
 import { scheduleOptions as SOptions } from '../../../consts';
 import './index.scss';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 export default class MovieForm extends Component {
     constructor(props) {
@@ -84,7 +85,7 @@ export default class MovieForm extends Component {
             const result = await createMovie(newMovie);
 
             if (!result.hasError) {
-                console.log("Movie created succesfully");
+                toast.success('Película creada con éxito!')
                 newMovie.title = '';
                 newMovie.description = '';
                 newMovie.duration = 0;
@@ -93,10 +94,10 @@ export default class MovieForm extends Component {
                 newMovie.schedules = [];
                 this.setState({ newMovie });
             } else {
-                console.log("Something failed");
+                toast.error('Algo falló al crear la película :(')
             };
         } catch (error) {
-            console.log("Something failed");
+            toast.error('Algo falló al crear la película :(')
             console.log(error);
         };
     }
